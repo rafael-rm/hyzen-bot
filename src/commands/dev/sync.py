@@ -20,5 +20,13 @@ class Sync(commands.Cog):
         await ctx.send(f'```{sync_msg}```')
 
 
+    @sync.error
+    async def sync_error(self, ctx: commands.Context, error):
+        if isinstance(error, commands.NotOwner):
+            await ctx.send('Você não tem permissão para executar esse comando.')
+        else:
+            await ctx.send('Ocorreu um erro ao executar o comando.')
+
+
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Sync(bot))

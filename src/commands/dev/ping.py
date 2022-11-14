@@ -17,6 +17,12 @@ class Ping(commands.Cog):
     async def ping(self, interaction: discord.Interaction): 
         await interaction.response.send_message(f"A aplicação encontra-se com **{round(self.bot.latency * 1000)}ms** de latência") 
 
+    
+    @ping.error
+    async def ping_error(self, interaction: discord.Interaction, error):
+        await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
+        
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Ping(bot))

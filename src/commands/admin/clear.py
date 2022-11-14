@@ -14,7 +14,8 @@ class Clear(commands.Cog):
 
 
     @app_commands.command(name='limpar', description='Limpar mensagens do canal.')
-    @commands.has_permissions(manage_messages=True)
+    @app_commands.checks.has_permissions(manage_messages=True)
+    @app_commands.checks.bot_has_permissions(manage_messages=True)
     async def clear(self, interaction: discord.Interaction, quantidade: int, canal: discord.TextChannel = None):
         if quantidade > 100:
             await interaction.response.send_message('Você não pode apagar mais de 100 mensagens por vez.', ephemeral=True)
@@ -27,6 +28,16 @@ class Clear(commands.Cog):
             else:
                 await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas do canal {canal.mention}.', ephemeral=True)
                 await canal.purge(limit=quantidade)
+
+
+    @clear.error
+    async def clear_error(self, interaction: discord.Interaction, error):
+        if isinstance(error, app_commands.MissingPermissions):
+            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+        elif isinstance(error, app_commands.BotMissingPermissions):
+            await interaction.response.send_message("O bot não tem permissão para executar esse comando, verifique se ele tem a permissão de gerenciar mensagens.", ephemeral=True)
+        else:
+            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
 
 
 async def setup(bot: commands.Bot) -> None:
