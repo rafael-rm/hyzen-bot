@@ -13,7 +13,7 @@ dotenv.load_dotenv()
 database_url = str(os.getenv('DATABASE_URL'))
 
 
-class Database():
+class FirebaseDB():
     def __init__(self):
         cred = credentials.Certificate("./serviceAccountKey.json")
         firebase_admin.initialize_app(cred, {'databaseURL': database_url})

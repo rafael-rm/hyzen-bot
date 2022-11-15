@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from src.database.database import Database
+from src.database.firebase import FirebaseDB
 
 
 class Limpar(commands.Cog):
@@ -19,23 +19,23 @@ class Limpar(commands.Cog):
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(manage_messages=True)
     async def limpar(self, interaction: discord.Interaction, quantidade: int, canal: discord.TextChannel = None):
-        await Database.contador_comandos(self.bot.database)
+        await FirebaseDB.contador_comandos(self.bot.database)
         if quantidade > 100:
             await interaction.response.send_message('Você não pode apagar mais de 100 mensagens por vez.', ephemeral=True)
         elif quantidade < 1:
             await interaction.response.send_message('Você não pode apagar menos de 1 mensagem.', ephemeral=True)
         else:
             if canal is None:
-                await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas.', ephemeral=True)
+                await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas.', ephemeral=True, delete_after=5)
                 await interaction.channel.purge(limit=quantidade)
             else:
-                await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas do canal {canal.mention}.', ephemeral=True)
+                await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas do canal {canal.mention}.', ephemeral=True, delete_after=5)
                 await canal.purge(limit=quantidade)
 
 
     @limpar.error
     async def clear_error(self, interaction: discord.Interaction, error):
-        await Database.contador_comandos(self.bot.database)
+        await FirebaseDB.contador_comandos(self.bot.database)
         if isinstance(error, app_commands.MissingPermissions):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         elif isinstance(error, app_commands.BotMissingPermissions):

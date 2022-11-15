@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from src.database.database import Database
+from src.database.firebase import FirebaseDB
 
 
 class Ping(commands.Cog):
@@ -16,13 +16,13 @@ class Ping(commands.Cog):
 
     @app_commands.command(name='ping', description='Latência da aplicação.')
     async def ping(self, interaction: discord.Interaction): 
-        await Database.contador_comandos(self.bot.database)
+        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message(f"A aplicação encontra-se com **{round(self.bot.latency * 1000)}ms** de latência") 
 
     
     @ping.error
     async def ping_error(self, interaction: discord.Interaction, error):
-        await Database.contador_comandos(self.bot.database)
+        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
         print(f"[ERRO] - {error}")
 

@@ -3,7 +3,7 @@ import os
 import asyncio
 import dotenv
 from discord.ext import commands
-from src.database.database import Database
+from src.database.firebase import FirebaseDB
 
 
 dotenv.load_dotenv()
@@ -16,7 +16,7 @@ class App(commands.Bot):
             intents = discord.Intents.default(),
             command_prefix = '.'
         )
-        self.database = Database()
+        self.database = FirebaseDB()
 
 
     async def load(self):
@@ -24,7 +24,7 @@ class App(commands.Bot):
             for file in os.listdir(f'./src/commands/{folder}'):
                 if file.endswith('.py'):
                     try:
-                        print(f'[INFO] Carregando arquivo: {file}')
+                        print(f'[INFO] Encontrado arquivo: {file}')
                         await self.load_extension(f'src.commands.{folder}.{file[:-3]}')
                     except Exception as error:
                         print(f'[ERRO] - {error}')
@@ -32,7 +32,7 @@ class App(commands.Bot):
         for file in os.listdir('./src/events'):
             if file.endswith('.py'):
                 try:
-                    print(f'[INFO] Carregando arquivo: {file}')
+                    print(f'[INFO] Encontrado arquivo: {file}')
                     await self.load_extension(f'src.events.{file[:-3]}')
                 except Exception as error:
                     print(f'[ERRO] - {error}')
