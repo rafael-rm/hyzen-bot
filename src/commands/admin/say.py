@@ -17,6 +17,7 @@ class Say(commands.Cog):
 
 
     @app_commands.command(name='say', description='Enviar embed com uma mensagem através do bot.')
+    @app_commands.guild_only()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(embed_links=True)
     async def say(self, interaction: discord.Interaction, *, mensagem: str):
