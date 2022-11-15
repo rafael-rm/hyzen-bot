@@ -3,6 +3,7 @@ import os
 import asyncio
 import dotenv
 from discord.ext import commands
+from src.database.database import Database
 
 
 dotenv.load_dotenv()
@@ -15,14 +16,26 @@ class App(commands.Bot):
             intents = discord.Intents.default(),
             command_prefix = '.'
         )
+        self.database = Database()
+
 
     async def load(self):
-        for folder in os.listdir('./src'):
-            for folder2 in os.listdir(f'./src/{folder}'):
-                for file in os.listdir(f'./src/{folder}/{folder2}'):
-                    if file.endswith('.py'):
-                        await self.load_extension(f'src.{folder}.{folder2}.{file[:-3]}')
-                        print(f'[INFO] Encontrado arquivo: {file[:-3]}')
+        for folder in os.listdir('./src/commands'):
+            for file in os.listdir(f'./src/commands/{folder}'):
+                if file.endswith('.py'):
+                    try:
+                        print(f'[INFO] Carregando arquivo: {file}')
+                        await self.load_extension(f'src.commands.{folder}.{file[:-3]}')
+                    except Exception as error:
+                        print(f'[ERRO] - {error}')
+
+        for file in os.listdir('./src/events'):
+            if file.endswith('.py'):
+                try:
+                    print(f'[INFO] Carregando arquivo: {file}')
+                    await self.load_extension(f'src.events.{file[:-3]}')
+                except Exception as error:
+                    print(f'[ERRO] - {error}')
 
 
     async def main(self):
