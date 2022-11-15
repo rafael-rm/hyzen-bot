@@ -15,9 +15,8 @@ class Sync(commands.Cog):
     @commands.is_owner()
     async def sync(self, ctx: commands.Context):
         await ctx.send('Sincronizando aplicação com o Discord...')
-
-        sync_msg = await ctx.bot.tree.sync()
-        await ctx.send(f'```{sync_msg}```')
+        await ctx.bot.tree.sync()
+        await ctx.send('Aplicação sincronizada com o Discord.')
 
 
     @sync.error
