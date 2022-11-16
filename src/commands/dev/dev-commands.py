@@ -9,7 +9,7 @@ class Dev(commands.Cog):
         self.bot = bot
 
 
-    group = app_commands.Group(name="dev", description="Comandos de desenvolvimento")
+    group = app_commands.Group(name="dev", description="Comandos de desenvolvedor.")
 
 
     def permissao_usar_cmd():
@@ -34,14 +34,14 @@ class Dev(commands.Cog):
     @permissao_usar_cmd()
     async def ram(self, interaction: discord.Interaction):
         await FirebaseDB.contador_comandos(self.bot.database)
-        await interaction.response.send_message(f"A máquina encontra-se utilizando **{psutil.virtual_memory().used / 1024 / 1024:.0f}/{psutil.virtual_memory().total / 1024 / 1024:.0f}MB** de memória RAM")
+        await interaction.response.send_message(f"A máquina encontra-se utilizando **{psutil.virtual_memory().used / 1024 / 1024:.0f}/{psutil.virtual_memory().total / 1024 / 1024:.0f}MB ({psutil.virtual_memory().percent}%)** de RAM")
 
 
     @group.command(name='cpu', description='Mostra o uso da CPU do servidor.')
     @permissao_usar_cmd()
     async def cpu(self, interaction: discord.Interaction):
         await FirebaseDB.contador_comandos(self.bot.database)
-        await interaction.response.send_message(f"A máquina encontra-se utilizando **{psutil.cpu_percent()}%** de CPU")
+        await interaction.response.send_message(f"A máquina possui **{psutil.cpu_count()} núcleos lógicos** e está utilizando **{psutil.cpu_percent()}%** de sua capacidade total")
 
     
     @ping.error
