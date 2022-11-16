@@ -4,7 +4,7 @@ from discord.ext import commands
 from src.database.firebase import FirebaseDB
 
 
-class Limpar(commands.Cog):
+class Clear(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -14,11 +14,11 @@ class Limpar(commands.Cog):
         print(f'[INFO] Carregado arquivo: {__name__}')
 
 
-    @app_commands.command(name='limpar', description='Limpar mensagens do canal.')
+    @app_commands.command(name='clear', description='Limpar mensagens do canal.')
     @app_commands.guild_only()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(manage_messages=True)
-    async def limpar(self, interaction: discord.Interaction, quantidade: int, canal: discord.TextChannel = None):
+    async def clear(self, interaction: discord.Interaction, quantidade: int, canal: discord.TextChannel = None):
         await FirebaseDB.contador_comandos(self.bot.database)
         if quantidade > 100:
             await interaction.response.send_message('Você não pode apagar mais de 100 mensagens por vez.', ephemeral=True)
@@ -33,7 +33,7 @@ class Limpar(commands.Cog):
                 await canal.purge(limit=quantidade)
 
 
-    @limpar.error
+    @clear.error
     async def clear_error(self, interaction: discord.Interaction, error):
         await FirebaseDB.contador_comandos(self.bot.database)
         if isinstance(error, app_commands.MissingPermissions):
@@ -46,4 +46,4 @@ class Limpar(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(Limpar(bot))
+    await bot.add_cog(Clear(bot))
