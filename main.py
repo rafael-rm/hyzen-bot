@@ -11,7 +11,8 @@ client_intents.members = True
 
 
 dotenv.load_dotenv()
-token = os.getenv('TOKEN')
+token_canary = os.getenv('TOKEN-CANARY')
+token_prod = os.getenv('TOKEN-PROD')
 
 
 class App(commands.AutoShardedBot):
@@ -45,7 +46,7 @@ class App(commands.AutoShardedBot):
 
     async def main(self):
         await App.load(self)
-        await self.start(token)
+        await self.start(token_canary)
 
 
 asyncio.run(App().main())
