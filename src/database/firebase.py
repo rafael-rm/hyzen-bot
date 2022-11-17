@@ -6,11 +6,9 @@ import os
 import dotenv
 
 
-NUM_COMANDOS_ATUALIZAR_DB = 10
-
-
 dotenv.load_dotenv()
 database_url = str(os.getenv('DATABASE_URL'))
+numero_comandos_atualizar_db = int(os.getenv('NUM_COMANDOS_ATUALIZAR_DB'))
 
 
 class FirebaseDB():
@@ -23,14 +21,14 @@ class FirebaseDB():
 
     async def contador_comandos(self):
         self.contador_cmds += 1
-        if self.contador_cmds == NUM_COMANDOS_ATUALIZAR_DB:
+        if self.contador_cmds == numero_comandos_atualizar_db:
             self.contador_cmds = 0
             request = db.reference('/global')
             if request.get() is None:
                 request.set({
-                    'comandos-executados': NUM_COMANDOS_ATUALIZAR_DB
+                    'comandos-executados': numero_comandos_atualizar_db
                 })
             else:
                 request.update({
-                    'comandos-executados': request.get()['comandos-executados'] + NUM_COMANDOS_ATUALIZAR_DB
+                    'comandos-executados': request.get()['comandos-executados'] + numero_comandos_atualizar_db
                 })

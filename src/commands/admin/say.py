@@ -2,9 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
-
-
-COLOR = "2f3136"
+import dotenv
+import os
 
 
 class Say(commands.Cog):
@@ -23,10 +22,12 @@ class Say(commands.Cog):
     @app_commands.checks.bot_has_permissions(embed_links=True)
     async def say(self, interaction: discord.Interaction, *, mensagem: str):
         await FirebaseDB.contador_comandos(self.bot.database)
+        dotenv.load_dotenv()
+        cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
         embed = discord.Embed(
             title = '',
             description = mensagem,
-            color = int(COLOR, 16),
+            color = cor_embed,
             timestamp = interaction.created_at,
         )
         embed.set_footer(text=f'Enviado por {interaction.user.name}', icon_url=interaction.user.avatar)

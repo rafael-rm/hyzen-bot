@@ -3,8 +3,9 @@ from discord import app_commands
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import psutil
-import configparser
 from datetime import timezone
+import dotenv
+import os
 
 
 class DevCommands(commands.Cog):
@@ -17,9 +18,9 @@ class DevCommands(commands.Cog):
 
     def permissao_usar_cmd():
         def predicate(interaction: discord.Interaction) -> bool:
-            config = configparser.ConfigParser()
-            config.read("config.ini")
-            return interaction.user.id == config.getint("IDS", "DESENVOLVEDOR")
+            dotenv.load_dotenv()
+            desenvolvedor_id = int(os.getenv('DESENVOLVEDOR_ID'))
+            return interaction.user.id == desenvolvedor_id
         return app_commands.check(predicate)
 
 
