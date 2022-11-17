@@ -6,6 +6,10 @@ from discord.ext import commands
 from src.database.firebase import FirebaseDB
 
 
+client_intents = discord.Intents.default()
+client_intents.members = True
+
+
 dotenv.load_dotenv()
 token = os.getenv('TOKEN')
 
@@ -13,7 +17,7 @@ token = os.getenv('TOKEN')
 class App(commands.Bot):
     def __init__(self):
         super().__init__(
-            intents = discord.Intents.default(),
+            intents = client_intents,
             command_prefix = '.'
         )
         self.database = FirebaseDB()
