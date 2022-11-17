@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import psutil
+import configparser
 
 
 class DevCommands(commands.Cog):
@@ -15,7 +16,9 @@ class DevCommands(commands.Cog):
 
     def permissao_usar_cmd():
         def predicate(interaction: discord.Interaction) -> bool:
-            return interaction.user.id == 383756503989092353
+            config = configparser.ConfigParser()
+            config.read("config.ini")
+            return interaction.user.id == config.getint("IDS", "DESENVOLVEDOR")
         return app_commands.check(predicate)
 
 
