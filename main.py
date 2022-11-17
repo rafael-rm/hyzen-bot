@@ -14,11 +14,12 @@ dotenv.load_dotenv()
 token = os.getenv('TOKEN')
 
 
-class App(commands.Bot):
+class App(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(
             intents = client_intents,
-            command_prefix = '.'
+            command_prefix = '.',
+            shard_count = 1,
         )
         self.database = FirebaseDB()
 

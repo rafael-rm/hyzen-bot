@@ -4,6 +4,7 @@ from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import psutil
 import configparser
+from datetime import timezone
 
 
 class DevCommands(commands.Cog):
@@ -25,6 +26,14 @@ class DevCommands(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'[INFO] Carregado arquivo: {__name__}')
+
+
+    # Comando de TESTE
+    @group.command(name='teste', description='Teste de comando.')
+    @permissao_usar_cmd()
+    async def teste(self, interaction: discord.Interaction):
+        await FirebaseDB.contador_comandos(self.bot.database)
+        await interaction.response.send_message('Teste de comando.')
 
 
     # Comando de PING
@@ -59,6 +68,36 @@ class DevCommands(commands.Cog):
         await interaction.response.send_message('Sincronizando aplicação com o Discord...')
         await self.bot.tree.sync()
         await interaction.channel.send('Aplicação sincronizada com o Discord.')
+
+
+    # Comando de SHARD
+    @group.command(name='shard', description='Mostra informações sobre os shards.')
+    @permissao_usar_cmd()
+    async def shard(self, interaction: discord.Interaction):
+        if interaction.guild is not None:
+            await FirebaseDB.contador_comandos(self.bot.database)
+            mensagem = f"A aplicação possui **{self.bot.shard_count} shards.** \nShard atual: **{interaction.guild.shard_id}** \nPing médio: **{round(self.bot.latency * 1000)}ms**```"
+            for shard in self.bot.latencies:
+                mensagem += f"\nShard {shard[0]}: {round(shard[1] * 1000)}ms"
+            mensagem += "```"
+            await interaction.response.send_message(mensagem)
+        else:
+            mensagem = f"A aplicação possui **{self.bot.shard_count} shards.** \nShard atual: **0** \nPing médio: **{round(self.bot.latency * 1000)}ms**```"
+            for shard in self.bot.latencies:
+                mensagem += f"\nShard {shard[0]}: {round(shard[1] * 1000)}ms"
+            mensagem = mensagem + "```"
+            await interaction.response.send_message(f"{mensagem}")
+
+
+    # Erro do comando TESTE
+    @teste.error
+    async def teste_error(self, interaction: discord.Interaction, error):
+        await FirebaseDB.contador_comandos(self.bot.database)
+        if isinstance(error, app_commands.CheckFailure):
+            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+        else:
+            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
+            print(error)
 
 
     # Erro do comando PING
@@ -97,6 +136,17 @@ class DevCommands(commands.Cog):
     # Erro do comando SYNC
     @sync.error
     async def sync_error(self, interaction: discord.Interaction, error):
+        await FirebaseDB.contador_comandos(self.bot.database)
+        if isinstance(error, app_commands.CheckFailure):
+            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+        else:
+            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
+            print(error)
+
+        
+    # Erro do comando SHARD
+    @shard.error
+    async def shard_error(self, interaction: discord.Interaction, error):
         await FirebaseDB.contador_comandos(self.bot.database)
         if isinstance(error, app_commands.CheckFailure):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
