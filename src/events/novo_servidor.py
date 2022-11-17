@@ -1,6 +1,7 @@
 from discord.ext import commands
 import configparser
 import discord
+from datetime import timezone
 
 class NovoServidor(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -30,10 +31,12 @@ class NovoServidor(commands.Cog):
         embed.add_field(name="Membros:", value=guild.member_count, inline=True)
         embed.add_field(name="Criado em:", value=guild.created_at.strftime("%d/%m/%Y %H:%M:%S"), inline=True)
 
-        embed.set_footer(text=f"ID do servidor: {guild.id}")
+        bot_member = guild.get_member(self.bot.user.id)
+        horario_entrada = bot_member.joined_at.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        embed.set_footer(text=f"Entrou em {horario_entrada.strftime('%d/%m/%Y às %H:%M:%S')}")
 
         if guild.icon == None:
-            pass # Futuramente, colocar uma imagem padrão
+            embed.set_thumbnail(url="https://i.imgur.com/bWJ0Z2U.png")
         else:
             embed.set_thumbnail(url=guild.icon)
 
