@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import psutil
+import datetime
 from datetime import timezone
 import dotenv
 import os
@@ -77,17 +78,28 @@ class DevCommands(commands.Cog):
     async def shard(self, interaction: discord.Interaction):
         if interaction.guild is not None:
             await FirebaseDB.contador_comandos(self.bot.database)
-            mensagem = f"A aplicação possui **{self.bot.shard_count} shards.** \nShard atual: **{interaction.guild.shard_id}** \nPing médio: **{round(self.bot.latency * 1000)}ms**```"
+            mensagem = f"A aplicação possui **{self.bot.shard_count} shards.** \nShard atual: **{interaction.guild.shard_id}** \nPing médio: **{round(self.bot.latency * 1000)}ms**```autohotkey"
             for shard in self.bot.latencies:
                 mensagem += f"\nShard {shard[0]}: {round(shard[1] * 1000)}ms"
             mensagem += "```"
             await interaction.response.send_message(mensagem)
         else:
-            mensagem = f"A aplicação possui **{self.bot.shard_count} shards.** \nShard atual: **0** \nPing médio: **{round(self.bot.latency * 1000)}ms**```"
+            mensagem = f"A aplicação possui **{self.bot.shard_count} shards.** \nShard atual: **0** \nPing médio: **{round(self.bot.latency * 1000)}ms**```autohotkey"
             for shard in self.bot.latencies:
                 mensagem += f"\nShard {shard[0]}: {round(shard[1] * 1000)}ms"
             mensagem = mensagem + "```"
             await interaction.response.send_message(f"{mensagem}")
+
+
+
+    # Comando de UPTIME
+    @group.command(name='uptime', description='Mostra o tempo de atividade da aplicação.')
+    @permissao_usar_cmd()
+    async def uptime(self, interaction: discord.Interaction):
+        await FirebaseDB.contador_comandos(self.bot.database)
+        time_now = datetime.datetime.now().timestamp()
+        uptime = time_now - self.bot.time_start
+        await interaction.response.send_message(f"A aplicação está online há **{int(uptime / 3600)}h {int(uptime / 60) % 60}m {int(uptime % 60)}s**")
 
 
     # Erro do comando TESTE
@@ -155,6 +167,16 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
             print(error)
 
+
+    # Erro do comando UPTIME
+    @uptime.error
+    async def uptime_error(self, interaction: discord.Interaction, error):
+        await FirebaseDB.contador_comandos(self.bot.database)
+        if isinstance(error, app_commands.CheckFailure):
+            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+        else:
+            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
+            print(error)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(DevCommands(bot))

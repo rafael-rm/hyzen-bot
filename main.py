@@ -4,6 +4,7 @@ import asyncio
 import dotenv
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
+import datetime
 
 
 client_intents = discord.Intents.default()
@@ -23,6 +24,7 @@ class App(commands.AutoShardedBot):
             shard_count = 1,
         )
         self.database = FirebaseDB()
+        self.time_start = datetime.datetime.now().timestamp()
 
 
     async def load(self):
