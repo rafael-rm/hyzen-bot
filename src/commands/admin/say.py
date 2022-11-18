@@ -21,7 +21,6 @@ class Say(commands.Cog):
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(embed_links=True)
     async def say(self, interaction: discord.Interaction, *, mensagem: str):
-        await FirebaseDB.contador_comandos(self.bot.database)
         dotenv.load_dotenv()
         cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
         embed = discord.Embed(
@@ -33,6 +32,7 @@ class Say(commands.Cog):
         embed.set_footer(text=f'Enviado por {interaction.user.name}', icon_url=interaction.user.avatar)
         await interaction.channel.send(embed=embed)
         await interaction.response.send_message("Comando executado com sucesso!", ephemeral=True, delete_after=3)
+        await FirebaseDB.contador_comandos(self.bot.database)
 
     
     @say.error

@@ -19,7 +19,6 @@ class Clear(commands.Cog):
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(manage_messages=True)
     async def clear(self, interaction: discord.Interaction, quantidade: int, canal: discord.TextChannel = None):
-        await FirebaseDB.contador_comandos(self.bot.database)
         if quantidade > 100:
             await interaction.response.send_message('Você não pode apagar mais de 100 mensagens por vez.', ephemeral=True)
         elif quantidade < 1:
@@ -31,6 +30,7 @@ class Clear(commands.Cog):
             else:
                 await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas do canal {canal.mention}.', ephemeral=True, delete_after=5)
                 await canal.purge(limit=quantidade)
+        await FirebaseDB.contador_comandos(self.bot.database)
 
 
     @clear.error
