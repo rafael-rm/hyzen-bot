@@ -4,7 +4,6 @@ from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import psutil
 import datetime
-from datetime import timezone
 import dotenv
 import os
 
@@ -34,42 +33,42 @@ class DevCommands(commands.Cog):
     @group.command(name='teste', description='Teste de comando.')
     @permissao_usar_cmd()
     async def teste(self, interaction: discord.Interaction):
-        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message('Teste de comando.')
+        await FirebaseDB.contador_comandos(self.bot.database)
 
 
     # Comando de PING
     @group.command(name='ping', description='Mostra o ping da aplicação.')
     @permissao_usar_cmd()
     async def ping(self, interaction: discord.Interaction): 
-        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message(f"A aplicação encontra-se com **{round(self.bot.latency * 1000)}ms** de latência") 
+        await FirebaseDB.contador_comandos(self.bot.database)
 
 
     # Comando de RAM
     @group.command(name='ram', description='Mostra o uso de RAM do servidor.')
     @permissao_usar_cmd()
     async def ram(self, interaction: discord.Interaction):
-        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message(f"A máquina encontra-se utilizando **{psutil.virtual_memory().used / 1024 / 1024:.0f}/{psutil.virtual_memory().total / 1024 / 1024:.0f}MB ({psutil.virtual_memory().percent}%)** de RAM")
+        await FirebaseDB.contador_comandos(self.bot.database)
 
 
     # Comando de CPU
     @group.command(name='cpu', description='Mostra o uso da CPU do servidor.')
     @permissao_usar_cmd()
     async def cpu(self, interaction: discord.Interaction):
-        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message(f"A máquina possui **{psutil.cpu_count()} núcleos lógicos** e está utilizando **{psutil.cpu_percent()}%** de sua capacidade total")
+        await FirebaseDB.contador_comandos(self.bot.database)
 
     
     # Comando de SYNC
     @group.command(name='sync', description='Sincroniza os comandos da aplicação.')
     @permissao_usar_cmd()
     async def sync(self, interaction: discord.Interaction):
-        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message('Sincronizando aplicação com o Discord...')
         await self.bot.tree.sync()
         await interaction.channel.send('Aplicação sincronizada com o Discord.')
+        await FirebaseDB.contador_comandos(self.bot.database)
 
 
     # Comando de SHARD
@@ -77,7 +76,6 @@ class DevCommands(commands.Cog):
     @permissao_usar_cmd()
     async def shard(self, interaction: discord.Interaction):
         if interaction.guild is not None:
-            await FirebaseDB.contador_comandos(self.bot.database)
             mensagem = f"A aplicação possui **{self.bot.shard_count} shards.** \nShard atual: **{interaction.guild.shard_id}** \nPing médio: **{round(self.bot.latency * 1000)}ms**```autohotkey"
             for shard in self.bot.latencies:
                 mensagem += f"\nShard {shard[0]}: {round(shard[1] * 1000)}ms"
@@ -89,17 +87,19 @@ class DevCommands(commands.Cog):
                 mensagem += f"\nShard {shard[0]}: {round(shard[1] * 1000)}ms"
             mensagem = mensagem + "```"
             await interaction.response.send_message(f"{mensagem}")
-
+        await FirebaseDB.contador_comandos(self.bot.database)
+        
 
 
     # Comando de UPTIME
     @group.command(name='uptime', description='Mostra o tempo de atividade da aplicação.')
     @permissao_usar_cmd()
     async def uptime(self, interaction: discord.Interaction):
-        await FirebaseDB.contador_comandos(self.bot.database)
         time_now = datetime.datetime.now().timestamp()
         uptime = time_now - self.bot.time_start
         await interaction.response.send_message(f"A aplicação está online há **{int(uptime / 3600)}h {int(uptime / 60) % 60}m {int(uptime % 60)}s**")
+        await FirebaseDB.contador_comandos(self.bot.database)
+
 
 
     # Erro do comando TESTE
@@ -177,6 +177,7 @@ class DevCommands(commands.Cog):
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
             print(error)
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(DevCommands(bot))
