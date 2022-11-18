@@ -37,18 +37,19 @@ class App(commands.AutoShardedBot):
                     except Exception as error:
                         print(f'[ERRO] - {error}')
 
-        for file in os.listdir('./src/events'):
-            if file.endswith('.py'):
-                try:
-                    print(f'[INFO] Encontrado arquivo: {file}')
-                    await self.load_extension(f'src.events.{file[:-3]}')
-                except Exception as error:
-                    print(f'[ERRO] - {error}')
+        for folder in os.listdir('./src/events'):
+            for file in os.listdir(f'./src/events/{folder}'):
+                if file.endswith('.py'):
+                    try:
+                        print(f'[INFO] Encontrado arquivo: {file}')
+                        await self.load_extension(f'src.events.{folder}.{file[:-3]}')
+                    except Exception as error:
+                        print(f'[ERRO] - {error}')
 
 
     async def main(self):
         await App.load(self)
-        await self.start(token_canary)
+        await self.start(token_prod)
 
 
 asyncio.run(App().main())
