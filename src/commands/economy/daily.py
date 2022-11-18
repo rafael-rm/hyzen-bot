@@ -17,9 +17,8 @@ class Daily(commands.Cog):
         print(f'[INFO] Carregado arquivo: {__name__}')
 
 
-    @app_commands.command(name='daily', description='Receba dinheiro diariamente')
+    @app_commands.command(name='daily', description='Receba recompensas diariamente.')
     async def daily(self, interaction: discord.Interaction):
-        await FirebaseDB.contador_comandos(self.bot.database)
         request = db.reference('/users/' + str(interaction.user.id) + '/economy')
         timestamp_atual = datetime.datetime.now().timestamp()
         hyzen_coin = random.randint(500, 2000)
@@ -47,12 +46,14 @@ class Daily(commands.Cog):
                 'hyzen-coin': request.get()['hyzen-coin'] + hyzen_coin,
                 'timestamp-ultimo-daily': timestamp_atual
             })
-            await interaction.response.send_message(f'Você recebeu **{hyzen_coin} HC**! Você pode receber novamente em **24 horas**')
+            await interaction.response.send_message(f'Você recebeu **{hyzen_coin} HC**! Você pode receber novamente em **24 horas** \nUsuários **VIPs** recebem até 2.5x mais recompensas.')
         else:
             horas_restantes = int((86400 - (timestamp_atual - timestamp_ultimo_daily)) / 3600)
             minutos_restantes = int(((86400 - (timestamp_atual - timestamp_ultimo_daily)) % 3600) / 60)
             segundos_restantes = int(((86400 - (timestamp_atual - timestamp_ultimo_daily)) % 3600) % 60)
-            await interaction.response.send_message(f"Você já recebeu seu daily hoje, volte em {horas_restantes} horas, {minutos_restantes} minutos e {segundos_restantes} segundos")
+            await interaction.response.send_message(f"Você já recebeu seu daily hoje, volte em {horas_restantes} horas, {minutos_restantes} minutos e {segundos_restantes} segundos.")
+        
+        await FirebaseDB.contador_comandos(self.bot.database)
 
 
     @daily.error
