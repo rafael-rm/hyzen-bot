@@ -29,12 +29,17 @@ class Say(commands.Cog):
             color = cor_embed,
             timestamp = interaction.created_at,
         )
-        embed.set_footer(text=f'Enviado por {interaction.user.name}', icon_url=interaction.user.avatar)
+
+        if interaction.user.avatar:
+            embed.set_footer(text=f'Enviar por {interaction.user.name}#{interaction.user.discriminator}', icon_url=interaction.user.avatar)
+        else:
+            embed.set_footer(text=f'Enviado por {interaction.user.name}#{interaction.user.discriminator}', icon_url=interaction.user.default_avatar)
+
         await interaction.channel.send(embed=embed)
         await interaction.response.send_message("Comando executado com sucesso!", ephemeral=True, delete_after=3)
         await FirebaseDB.contador_comandos(self.bot.database)
 
-    
+
     @say.error
     async def say_error(self, interaction: discord.Interaction, error):
         await FirebaseDB.contador_comandos(self.bot.database)
