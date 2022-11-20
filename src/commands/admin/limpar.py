@@ -18,31 +18,35 @@ class Limpar(commands.Cog):
     @app_commands.guild_only()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(manage_messages=True)
-    async def limpar(self, interaction: discord.Interaction, quantidade: int, canal: discord.TextChannel = None):
+    async def limpar(self, interaction: discord.Interaction, quantidade: int, canal: discord.TextChannel = None, usuário: discord.User = None):
+        await interaction.response.defer(ephemeral=True)
         if quantidade > 100:
-            await interaction.response.send_message('Você não pode apagar mais de 100 mensagens por vez.', ephemeral=True)
-        elif quantidade < 1:
-            await interaction.response.send_message('Você não pode apagar menos de 1 mensagem.', ephemeral=True)
+            await interaction.followup.send("Você não pode limpar mais de 100 mensagens de uma vez.", ephemeral=True)
+        elif quantidade <= 1:
+            await interaction.followup.send("Você precisa limpar pelo menos 2 mensagens.", ephemeral=True)
         else:
             if canal is None:
-                await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas.', ephemeral=True, delete_after=5)
-                await interaction.channel.purge(limit=quantidade)
-            else:
-                await interaction.response.send_message(f'Um total de **{quantidade}** mensagens foram apagadas do canal {canal.mention}.', ephemeral=True, delete_after=5)
+                canal = interaction.channel
+            if usuário is None:
                 await canal.purge(limit=quantidade)
-        await FirebaseDB.contador_comandos(self.bot.database)
+                await interaction.followup.send(f"Limpei **{quantidade}** mensagens do canal {canal.mention}.", ephemeral=True)
+            else:
+                def check(m):
+                    return m.author == usuário
+                await canal.purge(limit=quantidade, check=check)
+                await interaction.followup.send(f"Limpei **{quantidade}** mensagens do usuário {usuário.mention} no canal {canal.mention}.", ephemeral=True)
 
 
     @limpar.error
     async def limpar_error(self, interaction: discord.Interaction, error):
         await FirebaseDB.contador_comandos(self.bot.database)
         if isinstance(error, app_commands.MissingPermissions):
-            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+            await interaction.followup.send("Você não tem permissão para executar esse comando.", ephemeral=True)
         elif isinstance(error, app_commands.BotMissingPermissions):
-            await interaction.response.send_message("O bot não tem permissão para executar esse comando, verifique se ele tem a permissão de gerenciar mensagens.", ephemeral=True)
+            await interaction.followup.send("O bot não tem permissão para executar esse comando, verifique se ele tem a permissão de gerenciar mensagens.", ephemeral=True)
         else:
-            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(error)
+            await interaction.followup.send("Ocorreu um erro ao executar o comando.", ephemeral=True)
+            print(f'[ERRO] - {error}')
 
 
 async def setup(bot: commands.Bot) -> None:
