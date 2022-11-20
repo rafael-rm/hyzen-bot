@@ -19,7 +19,7 @@ class Daily(commands.Cog):
 
     @app_commands.command(name='daily', description='Receba recompensas diariamente.')
     async def daily(self, interaction: discord.Interaction):
-        request = db.reference('/users/' + str(interaction.user.id) + '/economy')
+        request = db.reference('/usuarios/' + str(interaction.user.id) + '/economia')
         timestamp_atual = datetime.datetime.now().timestamp()
         hyzen_coin = random.randint(500, 2000)
 
@@ -58,6 +58,7 @@ class Daily(commands.Cog):
 
     @daily.error
     async def daily_error(self, interaction: discord.Interaction, error):
+        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
         print(error)
 
