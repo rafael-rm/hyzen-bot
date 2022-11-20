@@ -26,15 +26,23 @@ class Limpar(commands.Cog):
             await interaction.followup.send("Você precisa limpar pelo menos 2 mensagens.", ephemeral=True)
         else:
             if canal is None:
-                canal = interaction.channel
-            if usuário is None:
-                await canal.purge(limit=quantidade)
-                await interaction.followup.send(f"Limpei **{quantidade}** mensagens do canal {canal.mention}.", ephemeral=True)
+                if usuário is None:
+                    await interaction.channel.purge(limit=quantidade, bulk=True, reason=f'Solicitado por {interaction.user.name}#{interaction.user.discriminator}')
+                    await interaction.followup.send(f"Limpei **{quantidade}** mensagens neste canal.", ephemeral=True)
+                else:
+                    def check(m):
+                        return m.author == usuário
+                    await interaction.channel.purge(limit=quantidade, check=check, bulk=True, reason=f"Solicitado por {interaction.user.name}#{interaction.user.discriminator}")
+                    await interaction.followup.send(f"Limpei **{quantidade}** mensagens do usuário **{usuário.display_name}** neste canal.", ephemeral=True)
             else:
-                def check(m):
-                    return m.author == usuário
-                await canal.purge(limit=quantidade, check=check)
-                await interaction.followup.send(f"Limpei **{quantidade}** mensagens do usuário {usuário.mention} no canal {canal.mention}.", ephemeral=True)
+                if usuário is None:
+                    await canal.purge(limit=quantidade, bulk=True, reason=f"Solicitado por {interaction.user.name}#{interaction.user.discriminator}")
+                    await interaction.followup.send(f"Limpei **{quantidade}** mensagens do canal **{canal.mention}**.", ephemeral=True)
+                else:
+                    def check(m):
+                        return m.author == usuário
+                    await canal.purge(limit=quantidade, check=check, bulk=True, reason=f"Solicitado por {interaction.user.name}#{interaction.user.discriminator}")
+                    await interaction.followup.send(f"Limpei **{quantidade}** mensagens do usuário **{usuário.display_name}** no canal **{canal.mention}**.", ephemeral=True)
 
 
     @limpar.error
