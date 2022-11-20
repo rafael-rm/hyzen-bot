@@ -29,14 +29,6 @@ class DevCommands(commands.Cog):
         print(f'[INFO] Carregado arquivo: {__name__}')
 
 
-    # Comando de TESTE
-    @group.command(name='teste', description='Teste de comando.')
-    @permissao_usar_cmd()
-    async def teste(self, interaction: discord.Interaction):
-        await interaction.response.send_message('Teste de comando.')
-        await FirebaseDB.contador_comandos(self.bot.database)
-
-
     # Comando de PING
     @group.command(name='ping', description='Mostra o ping da aplicação.')
     @permissao_usar_cmd()
@@ -99,18 +91,6 @@ class DevCommands(commands.Cog):
         uptime = time_now - self.bot.time_start
         await interaction.response.send_message(f"A aplicação está online há **{int(uptime / 3600)}h {int(uptime / 60) % 60}m {int(uptime % 60)}s**")
         await FirebaseDB.contador_comandos(self.bot.database)
-
-
-
-    # Erro do comando TESTE
-    @teste.error
-    async def teste_error(self, interaction: discord.Interaction, error):
-        await FirebaseDB.contador_comandos(self.bot.database)
-        if isinstance(error, app_commands.CheckFailure):
-            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
-        else:
-            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(error)
 
 
     # Erro do comando PING
