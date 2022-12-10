@@ -52,7 +52,7 @@ class DevCommands(commands.Cog):
         await interaction.response.send_message(f"A máquina possui **{psutil.cpu_count()} núcleos lógicos** e está utilizando **{psutil.cpu_percent()}%** de sua capacidade total")
         await FirebaseDB.contador_comandos(self.bot.database)
 
-    
+
     # Comando de SYNC
     @group.command(name='sync', description='Sincroniza os comandos da aplicação.')
     @permissao_usar_cmd()
@@ -80,7 +80,6 @@ class DevCommands(commands.Cog):
             mensagem = mensagem + "```"
             await interaction.response.send_message(f"{mensagem}")
         await FirebaseDB.contador_comandos(self.bot.database)
-        
 
 
     # Comando de UPTIME
@@ -91,6 +90,26 @@ class DevCommands(commands.Cog):
         uptime = time_now - self.bot.time_start
         await interaction.response.send_message(f"A aplicação está online há **{int(uptime / 3600)}h {int(uptime / 60) % 60}m {int(uptime % 60)}s**")
         await FirebaseDB.contador_comandos(self.bot.database)
+
+
+    # Comando de STATUS
+    @group.command(name='status', description='Mostra o status da aplicação.')
+    @permissao_usar_cmd()
+    async def status(self, interaction: discord.Interaction):
+        dotenv.load_dotenv()
+        cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
+        embed = discord.Embed(title="Status da aplicação", color=cor_embed)
+        embed.set_thumbnail(url=self.bot.user.avatar)
+        embed.description = f"\
+        \n**Nome:** {self.bot.user.name}\
+        \n**ID:** {self.bot.user.id}\
+        \n**Ping:** {round(self.bot.latency * 1000)}ms \
+        \n**RAM:** {psutil.virtual_memory().used / 1024 / 1024:.0f}/{psutil.virtual_memory().total / 1024 / 1024:.0f}MB ({psutil.virtual_memory().percent}%) \
+        \n**CPU:** {psutil.cpu_count()} núcleos lógicos e {psutil.cpu_percent()}% de sua capacidade total \
+        \n**Shards:** {self.bot.shard_count} shards \
+        \n**Uptime:** {int((datetime.datetime.now().timestamp() - self.bot.time_start) / 3600)}h {int((datetime.datetime.now().timestamp() - self.bot.time_start) / 60) % 60}m {int((datetime.datetime.now().timestamp() - self.bot.time_start) % 60)}s"
+        embed.set_footer(text=f"{str(self.bot.status).title()}")
+        await interaction.response.send_message(embed=embed)
 
 
     # Erro do comando PING
@@ -136,7 +155,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
             print(error)
 
-        
+
     # Erro do comando SHARD
     @shard.error
     async def shard_error(self, interaction: discord.Interaction, error):
@@ -151,6 +170,17 @@ class DevCommands(commands.Cog):
     # Erro do comando UPTIME
     @uptime.error
     async def uptime_error(self, interaction: discord.Interaction, error):
+        await FirebaseDB.contador_comandos(self.bot.database)
+        if isinstance(error, app_commands.CheckFailure):
+            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+        else:
+            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
+            print(error)
+
+
+    # Erro do comando STATUS
+    @status.error
+    async def status_error(self, interaction: discord.Interaction, error):
         await FirebaseDB.contador_comandos(self.bot.database)
         if isinstance(error, app_commands.CheckFailure):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
