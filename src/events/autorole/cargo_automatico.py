@@ -1,0 +1,30 @@
+from discord.ext import commands
+import dotenv
+import os
+import discord
+from firebase_admin import db
+
+class AutoRole(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print(f'[INFO] Carregado arquivo: {__name__}')
+
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        request = db.reference('/servidores/' + str(member.guild.id) + '/autorole').get()
+        if request is not None:
+            cargos = []
+            for i in range(0, len(request)):
+                cargo = member.guild.get_role(int(request[i]))
+                if cargo is not None:
+                    cargos.append(cargo)
+            await member.add_roles(*cargos, reason='Cargo automático.')
+
+
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(AutoRole(bot))
