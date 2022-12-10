@@ -49,7 +49,7 @@ class Say(commands.Cog):
             await interaction.response.send_message("O bot não tem permissão para executar esse comando, verifique se ele tem a permissão de enviar embeds.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(error)
+            print(f'[ERRO] - {error}')
 
 
 async def setup(bot: commands.Bot) -> None:

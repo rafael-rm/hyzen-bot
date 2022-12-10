@@ -60,7 +60,7 @@ class Daily(commands.Cog):
     async def daily_error(self, interaction: discord.Interaction, error):
         await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-        print(error)
+        print(f'[ERRO] - {error}')
 
 
 async def setup(bot: commands.Bot) -> None:

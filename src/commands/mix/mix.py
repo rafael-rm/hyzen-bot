@@ -82,9 +82,9 @@ class MixCommands(commands.Cog):
     # Erro do comando de SORTEAR
     @sortear.error
     async def sortear_error(self, interaction: discord.Interaction, error):
+        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message('Ocorreu um erro ao executar o comando.')
         print(f'[ERRO] {error}')
-        await FirebaseDB.contador_comandos(self.bot.database)
 
 
 async def setup(bot: commands.Bot) -> None:
