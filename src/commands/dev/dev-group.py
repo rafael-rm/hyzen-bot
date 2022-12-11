@@ -120,7 +120,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
     # Erro do comando RAM
@@ -131,7 +131,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
     # Erro do comando CPU
@@ -142,7 +142,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
     # Erro do comando SYNC
@@ -153,7 +153,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
     # Erro do comando SHARD
@@ -164,7 +164,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
     # Erro do comando UPTIME
@@ -175,7 +175,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
     # Erro do comando STATUS
@@ -186,7 +186,7 @@ class DevCommands(commands.Cog):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
             await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
 async def setup(bot: commands.Bot) -> None:

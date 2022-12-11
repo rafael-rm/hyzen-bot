@@ -54,7 +54,7 @@ class Limpar(commands.Cog):
             await interaction.followup.send("O bot não tem permissão para executar esse comando, verifique se ele tem a permissão de gerenciar mensagens.", ephemeral=True)
         else:
             await interaction.followup.send("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] - {error}')
+            print(f'[ERRO] {error}')
 
 
 async def setup(bot: commands.Bot) -> None:
