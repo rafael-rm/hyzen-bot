@@ -7,7 +7,7 @@ from src.database.firebase import FirebaseDB
 import datetime
 import logging
 
-logging.basicConfig(level=logging.INFO, filename='logs.log', format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+logging.basicConfig(level=logging.INFO, filename='logs.log', format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S', encoding='utf-8')
 
 client_intents = discord.Intents.default()
 client_intents.members = True
