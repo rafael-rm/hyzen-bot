@@ -11,7 +11,7 @@ class Activity(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado arquivo: {__name__}')
+        print(f'[INFO] Carregado: {__name__}')
         await self.bot.change_presence(activity=discord.Game(name="hyzen.com.br"))
 
 

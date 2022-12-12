@@ -12,7 +12,7 @@ class Xp(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado arquivo: {__name__}')
+        print(f'[INFO] Carregado: {__name__}')
 
 
     @app_commands.command(name='xp', description='Veja seu nível e experiência.')
