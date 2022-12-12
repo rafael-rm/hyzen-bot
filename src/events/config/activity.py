@@ -1,6 +1,5 @@
 from discord.ext import commands
 import discord
-from datetime import timezone
 
 class Activity(commands.Cog):
     def __init__(self, bot: commands.Bot):
