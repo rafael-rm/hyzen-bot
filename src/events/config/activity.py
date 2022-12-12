@@ -1,5 +1,7 @@
 from discord.ext import commands
 import discord
+import logging
+
 
 class Activity(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -8,7 +10,7 @@ class Activity(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado: {__name__}')
+        logging.info(f'Carregado: {__name__}')
         await self.bot.change_presence(activity=discord.Game(name="hyzen.com.br"))
 
 

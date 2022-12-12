@@ -1,9 +1,10 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from src.database.firebase import FirebaseDB
+from src.others.comando_executado import comando_executado
 import random
 import configparser
+import logging
 
 class MixCommands(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -15,7 +16,7 @@ class MixCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado: {__name__}')
+        logging.info(f'Carregado: {__name__}')
 
 
     # Comando de SORTEAR
@@ -53,7 +54,7 @@ class MixCommands(commands.Cog):
                 if i != j:
                     if jogadores[i] == jogadores[j]:
                         await interaction.response.send_message('Um mesmo jogador não pode ser mencionado mais de uma vez.')
-                        await FirebaseDB.contador_comandos(self.bot.database)
+                        await comando_executado(interaction, self.bot)
                         return
 
         for i in range(0, len(jogadores)):
@@ -76,15 +77,15 @@ class MixCommands(commands.Cog):
             else:
                 embed.set_footer(text=f'Sorteio realizado por {interaction.user.name}', icon_url=interaction.user.default_avatar)
             await interaction.response.send_message(embed=embed)
-        await FirebaseDB.contador_comandos(self.bot.database)
+        await comando_executado(interaction, self.bot)
 
 
     # Erro do comando de SORTEAR
     @sortear.error
     async def sortear_error(self, interaction: discord.Interaction, error):
-        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message('Ocorreu um erro ao executar o comando.')
-        print(f'[ERRO] {error}')
+        logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
 
 
 async def setup(bot: commands.Bot) -> None:

@@ -1,9 +1,10 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from src.database.firebase import FirebaseDB
+from src.others.comando_executado import comando_executado
 from firebase_admin import db
 import configparser
+import logging
 
 
 class AutoRoleCommands(commands.Cog):
@@ -16,7 +17,7 @@ class AutoRoleCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado: {__name__}')
+        logging.info(f'Carregado: {__name__}')
 
 
     # Comando de ADICIONAR
@@ -28,13 +29,13 @@ class AutoRoleCommands(commands.Cog):
         # Verificar se o cargo é menor que o cargo do bot
         if cargo.position > interaction.guild.me.top_role.position:
             await interaction.response.send_message('O cargo é maior que o meu cargo. Não posso adicionar.')
-            await FirebaseDB.contador_comandos(self.bot.database)
+            await comando_executado(interaction, self.bot)
             return
 
         # Verificar se o cargo é menor que o cargo do usuário
         if cargo.position > interaction.user.top_role.position:
             await interaction.response.send_message('O cargo é maior que o seu cargo. Não posso adicionar.')
-            await FirebaseDB.contador_comandos(self.bot.database)
+            await comando_executado(interaction, self.bot)
             return
 
         # Verificar se o cargo já no banco de dados
@@ -43,14 +44,14 @@ class AutoRoleCommands(commands.Cog):
             for i in range(0, len(request)):
                 if request[i] == str(cargo.id):
                     await interaction.response.send_message('O cargo já está na lista de autorole.')
-                    await FirebaseDB.contador_comandos(self.bot.database)
+                    await comando_executado(interaction, self.bot)
                     return
         if request is None:
             request = []
         request.append(str(cargo.id))
         db.reference('/servidores/' + str(interaction.guild.id) + '/autorole').set(request)
         await interaction.response.send_message('Cargo adicionado com sucesso.')
-        await FirebaseDB.contador_comandos(self.bot.database)
+        await comando_executado(interaction, self.bot)
 
 
     # Comando de REMOVER
@@ -65,10 +66,10 @@ class AutoRoleCommands(commands.Cog):
                     request.pop(i)
                     db.reference('/servidores/' + str(interaction.guild.id) + '/autorole').set(request)
                     await interaction.response.send_message('Cargo removido com sucesso.')
-                    await FirebaseDB.contador_comandos(self.bot.database)
+                    await comando_executado(interaction, self.bot)
                     return
         await interaction.response.send_message('O cargo não está na lista de autorole.')
-        await FirebaseDB.contador_comandos(self.bot.database)
+        await comando_executado(interaction, self.bot)
 
 
     # Comando de LISTAR
@@ -87,10 +88,10 @@ class AutoRoleCommands(commands.Cog):
             embed = discord.Embed(title='', description=cargos, color=cor_embed)
             embed.set_author(name='Cargos configurados para serem adicionados quando um novo usuário entrar no servidor.')
             await interaction.response.send_message(embed=embed)
-            await FirebaseDB.contador_comandos(self.bot.database)
+            await comando_executado(interaction, self.bot)
             return
         await interaction.response.send_message('Não há cargos no autorole.')
-        await FirebaseDB.contador_comandos(self.bot.database)
+        await comando_executado(interaction, self.bot)
         
 
     # Erro do comando de ADICIONAR
@@ -104,8 +105,8 @@ class AutoRoleCommands(commands.Cog):
             await interaction.response.send_message('Cargo não encontrado.')
         else:
             await interaction.response.send_message('Ocorreu um erro ao executar este comando.')
-            print(f'[ERRO] {error}')
-        await FirebaseDB.contador_comandos(self.bot.database)
+            logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
 
 
     # Erro do comando de REMOVER
@@ -115,8 +116,8 @@ class AutoRoleCommands(commands.Cog):
             await interaction.response.send_message('Você não tem permissão para executar este comando.')
         else:
             await interaction.response.send_message('Ocorreu um erro ao executar este comando.')
-            print(f'[ERRO] {error}')
-        await FirebaseDB.contador_comandos(self.bot.database)
+            logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
 
 
     # Erro do comando de LISTAR
@@ -126,8 +127,8 @@ class AutoRoleCommands(commands.Cog):
             await interaction.response.send_message('Você não tem permissão para executar este comando.')
         else:
             await interaction.response.send_message('Ocorreu um erro ao executar este comando.')
-            print(f'[ERRO] {error}')
-        await FirebaseDB.contador_comandos(self.bot.database)
+            logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
 
 
 async def setup(bot: commands.Bot) -> None:

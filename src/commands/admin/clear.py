@@ -1,8 +1,8 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from src.database.firebase import FirebaseDB
-
+from src.others.comando_executado import comando_executado
+import logging
 
 class Limpar(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -11,7 +11,7 @@ class Limpar(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado: {__name__}')
+        logging.info(f'Carregado: {__name__}')
 
 
     @app_commands.command(name='limpar', description='Limpar mensagens do canal.')
@@ -43,18 +43,19 @@ class Limpar(commands.Cog):
                         return m.author == usuário
                     await canal.purge(limit=quantidade, check=check, bulk=True, reason=f"Solicitado por {interaction.user.name}#{interaction.user.discriminator}")
                     await interaction.followup.send(f"Limpei **{quantidade}** mensagens do usuário **{usuário.display_name}** no canal **{canal.mention}**.", ephemeral=True)
+        await comando_executado(interaction, self.bot)
 
 
     @limpar.error
     async def limpar_error(self, interaction: discord.Interaction, error):
-        await FirebaseDB.contador_comandos(self.bot.database)
         if isinstance(error, app_commands.MissingPermissions):
             await interaction.followup.send("Você não tem permissão para executar esse comando.", ephemeral=True)
         elif isinstance(error, app_commands.BotMissingPermissions):
             await interaction.followup.send("O bot não tem permissão para executar esse comando, verifique se ele tem a permissão de gerenciar mensagens.", ephemeral=True)
         else:
             await interaction.followup.send("Ocorreu um erro ao executar o comando.", ephemeral=True)
-            print(f'[ERRO] {error}')
+            logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
 
 
 async def setup(bot: commands.Bot) -> None:

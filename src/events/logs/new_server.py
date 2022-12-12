@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from datetime import timezone
 import configparser
+import logging
 
 class NovoServidor(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -10,7 +11,7 @@ class NovoServidor(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado: {__name__}')
+        logging.info(f'Carregado: {__name__}')
 
 
     @commands.Cog.listener()
@@ -39,7 +40,7 @@ class NovoServidor(commands.Cog):
         else:
             embed.set_thumbnail(url=guild.icon)
 
-        print(f'[INFO] Aplicação entrou em um novo servidor: {guild.name} - {guild.id}')
+        logging.info(f'Aplicação entrou em um novo servidor: {guild.name} - {guild.id}')
         canal = self.bot.get_channel(canal_id)
         await canal.send(embed=embed)
 

@@ -5,7 +5,9 @@ import dotenv
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import datetime
+import logging
 
+logging.basicConfig(level=logging.INFO, filename='logs.log', format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
 
 client_intents = discord.Intents.default()
 client_intents.members = True
@@ -32,24 +34,24 @@ class App(commands.AutoShardedBot):
             for file in os.listdir(f'./src/commands/{folder}'):
                 if file.endswith('.py'):
                     try:
-                        print(f'[INFO] Encontrado arquivo: {file}')
+                        logging.info(f'Encontrado arquivo: {file}')
                         await self.load_extension(f'src.commands.{folder}.{file[:-3]}')
                     except Exception as error:
-                        print(f'[ERRO] {error}')
+                        logging.error(f'{error}')
 
         for folder in os.listdir('./src/events'):
             for file in os.listdir(f'./src/events/{folder}'):
                 if file.endswith('.py'):
                     try:
-                        print(f'[INFO] Encontrado arquivo: {file}')
+                        logging.info(f'Encontrado arquivo: {file}')
                         await self.load_extension(f'src.events.{folder}.{file[:-3]}')
                     except Exception as error:
-                        print(f'[ERRO] {error}')
+                        logging.error(f'{error}')
 
 
     async def main(self):
         await App.load(self)
-        await self.start(token_canary)
+        await self.start(token_prod)
 
 
 asyncio.run(App().main())

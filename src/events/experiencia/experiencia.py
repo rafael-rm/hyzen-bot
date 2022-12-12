@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from firebase_admin import db
 import random
+import logging
 
 
 class ExperienciaEvento(commands.Cog):
@@ -12,7 +13,7 @@ class ExperienciaEvento(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado: {__name__}')
+        logging.info(f'Carregado: {__name__}')
 
 
     @commands.Cog.listener()

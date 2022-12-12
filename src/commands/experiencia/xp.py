@@ -1,8 +1,9 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from src.database.firebase import FirebaseDB
+from src.others.comando_executado import comando_executado
 from firebase_admin import db
+import logging
 
 
 class Xp(commands.Cog):
@@ -12,7 +13,7 @@ class Xp(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'[INFO] Carregado: {__name__}')
+        logging.info(f'Carregado: {__name__}')
 
 
     @app_commands.command(name='xp', description='Veja seu nível e experiência.')
@@ -52,14 +53,14 @@ class Xp(commands.Cog):
         else:
             await interaction.response.send_message(f'{user.display_name} está no nível **{level_atual}** com **{xp_atual}** de experiência. \nEle precisa de **{xp_para_proximo_level}** de experiência para subir de nível.')
 
-        await FirebaseDB.contador_comandos(self.bot.database)
+        await comando_executado(interaction, self.bot)
 
     
     @xp.error
     async def xp_error(self, interaction: discord.Interaction, error):
-        await FirebaseDB.contador_comandos(self.bot.database)
         await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
-        print(f'[ERRO] {error}')
+        logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
 
 
 async def setup(bot: commands.Bot) -> None:
