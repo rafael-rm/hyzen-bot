@@ -4,8 +4,7 @@ from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import psutil
 import datetime
-import dotenv
-import os
+import configparser
 
 
 class DevCommands(commands.Cog):
@@ -18,8 +17,9 @@ class DevCommands(commands.Cog):
 
     def permissao_usar_cmd():
         def predicate(interaction: discord.Interaction) -> bool:
-            dotenv.load_dotenv()
-            desenvolvedor_id = int(os.getenv('DESENVOLVEDOR_ID'))
+            config = configparser.ConfigParser()
+            config.read('config.conf')
+            desenvolvedor_id = int(config['IDS']['DESENVOLVEDOR_ID'])
             return interaction.user.id == desenvolvedor_id
         return app_commands.check(predicate)
 
@@ -96,8 +96,9 @@ class DevCommands(commands.Cog):
     @group.command(name='status', description='Mostra o status da aplicação.')
     @permissao_usar_cmd()
     async def status(self, interaction: discord.Interaction):
-        dotenv.load_dotenv()
-        cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
+        config = configparser.ConfigParser()
+        config.read('config.conf')
+        cor_embed = int(config['CORES']['DEFAULT'])
         embed = discord.Embed(title="Status da aplicação", color=cor_embed)
         embed.set_thumbnail(url=self.bot.user.avatar)
         embed.description = f"\

@@ -3,8 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
 import random
-import dotenv
-import os
+import configparser
 
 class MixCommands(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -65,8 +64,9 @@ class MixCommands(commands.Cog):
         if len(time1) == 0 or len(time2) == 0:
             await interaction.response.send_message('É necessário mencionar pelo menos 2 jogadores.')
         else:
-            dotenv.load_dotenv()
-            cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
+            config = configparser.ConfigParser()
+            config.read('config.conf')
+            cor_embed = int(config['CORES']['DEFAULT'])
             embed = discord.Embed(title='', description='Os dois times foram sorteados com sucesso.',  color=cor_embed)
             embed.set_author(name='Sorteio dos times', icon_url='https://i.imgur.com/IfI5eub.png')
             embed.add_field(name='Time 1', value='\n'.join(time1), inline=True)

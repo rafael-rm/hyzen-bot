@@ -1,8 +1,7 @@
 from discord.ext import commands
-import dotenv
-import os
 import discord
 from datetime import timezone
+import configparser
 
 class NovoServidor(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -16,10 +15,10 @@ class NovoServidor(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        dotenv.load_dotenv()
-        cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
-        canal_id = int(os.getenv('CANAL_LOGS_NOVO_SERVIDOR_ID'))
-        
+        config = configparser.ConfigParser()
+        config.read('config.conf')
+        cor_embed = int(config['CORES']['DEFAULT'])
+        canal_id = int(config['IDS']['CANAL_LOGS_NOVO_SERVIDOR_ID'])
         embed = discord.Embed(
             title = "A aplicação entrou em um novo servidor!",
             color = cor_embed

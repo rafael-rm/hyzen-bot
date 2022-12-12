@@ -49,7 +49,7 @@ class App(commands.AutoShardedBot):
 
     async def main(self):
         await App.load(self)
-        await self.start(token_prod)
+        await self.start(token_canary)
 
 
 asyncio.run(App().main())

@@ -2,9 +2,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
-import os
-import dotenv
 from firebase_admin import db
+import configparser
 
 
 class AutoRoleCommands(commands.Cog):
@@ -82,8 +81,9 @@ class AutoRoleCommands(commands.Cog):
             cargos = ''
             for i in range(0, len(request)):
                 cargos += f'<@&{request[i]}>\n'
-            dotenv.load_dotenv()
-            cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
+            config = configparser.ConfigParser()
+            config.read('config.conf')
+            cor_embed = int(config['CORES']['DEFAULT'])
             embed = discord.Embed(title='', description=cargos, color=cor_embed)
             embed.set_author(name='Cargos configurados para serem adicionados quando um novo usuário entrar no servidor.')
             await interaction.response.send_message(embed=embed)

@@ -2,8 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from src.database.firebase import FirebaseDB
-import dotenv
-import os
+import configparser
 
 
 class Say(commands.Cog):
@@ -21,8 +20,9 @@ class Say(commands.Cog):
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.checks.bot_has_permissions(embed_links=True)
     async def say(self, interaction: discord.Interaction, *, mensagem: str):
-        dotenv.load_dotenv()
-        cor_embed = int(os.getenv('COR_PRINCIPAL_EMBEDS'))
+        config = configparser.ConfigParser()
+        config.read('config.conf')
+        cor_embed = int(config['CORES']['DEFAULT'])
         embed = discord.Embed(
             title = '',
             description = mensagem,

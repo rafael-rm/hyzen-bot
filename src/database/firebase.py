@@ -4,11 +4,15 @@ from firebase_admin import firestore
 from firebase_admin import db
 import os
 import dotenv
+import configparser
 
 
 dotenv.load_dotenv()
 database_url = str(os.getenv('DATABASE_URL'))
-numero_comandos_atualizar_db = int(os.getenv('NUM_COMANDOS_ATUALIZAR_DB'))
+
+config = configparser.ConfigParser()
+config.read('config.conf')
+numero_comandos_atualizar_db = int(config['DATABASE']['NUM_COMANDOS_ATUALIZAR_DB'])
 
 
 class FirebaseDB():
