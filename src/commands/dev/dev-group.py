@@ -6,7 +6,7 @@ import psutil
 import datetime
 import configparser
 import logging
-
+import os
 
 class DevCommands(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -115,6 +115,19 @@ class DevCommands(commands.Cog):
         await comando_executado(interaction, self.bot)
 
 
+    # Comando de LOGS
+    @group.command(name='logs', description='Exibe as últimas logs da aplicação.')
+    @permissao_usar_cmd()
+    async def logs(self, interaction: discord.Interaction):
+        # Exibir ultimos 10 logs do arquivo UTF-8
+        with open('logs.log', 'r', encoding='utf-8') as f:
+            logs = f.read().splitlines()
+            logs = logs[-20:]
+            logs = '\n'.join(logs)
+        await interaction.response.send_message(f"```autohotkey\n{logs}```", ephemeral=True)
+        await comando_executado(interaction, self.bot)
+
+
     # Erro do comando PING
     @ping.error
     async def ping_error(self, interaction: discord.Interaction, error):
@@ -184,6 +197,17 @@ class DevCommands(commands.Cog):
     # Erro do comando STATUS
     @status.error
     async def status_error(self, interaction: discord.Interaction, error):
+        if isinstance(error, app_commands.CheckFailure):
+            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+        else:
+            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
+            logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
+
+    
+    # Erro do comando LOGS
+    @logs.error
+    async def logs_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.CheckFailure):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
