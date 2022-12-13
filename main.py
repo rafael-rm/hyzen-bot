@@ -30,10 +30,12 @@ class App(commands.AutoShardedBot):
 
 
     async def load(self):
+        print('[INFO] Buscando arquivos...')
         for folder in os.listdir('./src/commands'):
             for file in os.listdir(f'./src/commands/{folder}'):
                 if file.endswith('.py'):
                     try:
+                        print(f'[INFO] Encontrado arquivo: {file}')
                         logging.info(f'Encontrado arquivo: {file}')
                         await self.load_extension(f'src.commands.{folder}.{file[:-3]}')
                     except Exception as error:
@@ -43,14 +45,17 @@ class App(commands.AutoShardedBot):
             for file in os.listdir(f'./src/events/{folder}'):
                 if file.endswith('.py'):
                     try:
+                        print(f'[INFO] Encontrado arquivo: {file}')
                         logging.info(f'Encontrado arquivo: {file}')
                         await self.load_extension(f'src.events.{folder}.{file[:-3]}')
                     except Exception as error:
                         logging.error(f'{error}')
+        print('[INFO] Os arquivos foram localizados com sucesso.')
 
 
     async def main(self):
         await App.load(self)
+        print('[INFO] Iniciando a aplicação...')
         await self.start(token_prod)
 
 

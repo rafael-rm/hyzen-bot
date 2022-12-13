@@ -112,6 +112,7 @@ class DevCommands(commands.Cog):
         \n**Uptime:** {int((datetime.datetime.now().timestamp() - self.bot.time_start) / 3600)}h {int((datetime.datetime.now().timestamp() - self.bot.time_start) / 60) % 60}m {int((datetime.datetime.now().timestamp() - self.bot.time_start) % 60)}s"
         embed.set_footer(text=f"{str(self.bot.status).title()}")
         await interaction.response.send_message(embed=embed)
+        await comando_executado(interaction, self.bot)
 
 
     # Erro do comando PING
