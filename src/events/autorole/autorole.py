@@ -25,6 +25,9 @@ class AutoRole(commands.Cog):
                     cargos.append(cargo)
             await member.add_roles(*cargos, reason='Cargo automático.')
 
+            for i in range(0, len(cargos)):
+                logging.info(f'O autorole setou o cargo {cargos[i].id} para o usuário {member.id} no servidor {member.guild.id}.')
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(AutoRole(bot))

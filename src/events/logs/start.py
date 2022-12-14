@@ -13,10 +13,8 @@ class StartLog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logging.info(f'Aplicação iniciada com sucesso em {self.bot.user.name}#{self.bot.user.discriminator} ({self.bot.user.id}).')
+        logging.info(f'Aplicação iniciada com sucesso em {self.bot.user.name}#{self.bot.user.discriminator} ({self.bot.user.id})')
         logging.info(f'Total de servidores: {len(self.bot.guilds)}')
-        print(f'[INFO] Aplicação iniciada com sucesso em {self.bot.user.name}#{self.bot.user.discriminator} ({self.bot.user.id}).')
-        print(f'[INFO] Total de servidores: {len(self.bot.guilds)}')
 
 
 async def setup(bot: commands.Bot) -> None:

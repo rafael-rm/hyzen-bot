@@ -57,6 +57,7 @@ class ExperienciaEvento(commands.Cog):
             if xp_atual >= xp_para_proximo_level:
                 xp_atual -= xp_para_proximo_level
                 level_atual += 1
+                logging.info(f'{message.author.id} subiu para o level {level_atual} no servidor {message.guild.id}.')
 
             request.update({
                 'xp': xp_atual,

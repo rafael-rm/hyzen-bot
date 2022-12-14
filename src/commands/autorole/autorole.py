@@ -32,9 +32,9 @@ class AutoRoleCommands(commands.Cog):
             await comando_executado(interaction, self.bot)
             return
 
-        # Verificar se o cargo é menor que o cargo do usuário
-        if cargo.position > interaction.user.top_role.position:
-            await interaction.response.send_message('O cargo é maior que o seu cargo. Não posso adicionar.')
+        # Verificar se o cargo é menor que o cargo do usuário ou ele possui permissão de administrador
+        if cargo.position > interaction.user.top_role.position and not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message('O cargo é maior que você está tentando adicionar é maior que o seu cargo. Não posso adicionar.')
             await comando_executado(interaction, self.bot)
             return
 

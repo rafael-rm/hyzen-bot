@@ -48,13 +48,14 @@ class Daily(commands.Cog):
                 'timestamp-ultimo-daily': timestamp_atual
             })
             await interaction.response.send_message(f'Você recebeu **{hyzen_coin} HC**! Você pode receber novamente em **24 horas** \nUsuários **VIPs** recebem até 2.5x mais recompensas.')
+            await comando_executado(interaction, self.bot)
+            logging.info(f'{interaction.user.id} recebeu {hyzen_coin} HC, totalizando {request.get()["hyzen-coin"]} HC. (daily)')
         else:
             horas_restantes = int((86400 - (timestamp_atual - timestamp_ultimo_daily)) / 3600)
             minutos_restantes = int(((86400 - (timestamp_atual - timestamp_ultimo_daily)) % 3600) / 60)
             segundos_restantes = int(((86400 - (timestamp_atual - timestamp_ultimo_daily)) % 3600) % 60)
             await interaction.response.send_message(f"Você já recebeu seu daily hoje, volte em {horas_restantes} horas, {minutos_restantes} minutos e {segundos_restantes} segundos.")
-        
-        await comando_executado(interaction, self.bot)
+            await comando_executado(interaction, self.bot)
 
 
     @daily.error
