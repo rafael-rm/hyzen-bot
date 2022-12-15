@@ -120,13 +120,14 @@ class DevCommands(commands.Cog):
     @group.command(name='logs', description='Exibe as últimas logs da aplicação.')
     @permissao_usar_cmd()
     async def logs(self, interaction: discord.Interaction):
-        num_linhas = 30 # Número máximo de linhas que podem ser exibidas
-        with open('logs.log', 'r', encoding='utf-8') as f:
-            logs = f.read().splitlines()
-            while len('\n'.join(logs[-num_linhas:])) > 2000:
-                logs = logs[:-1]
-            logs = '\n'.join(logs[-num_linhas:])
-        await interaction.response.send_message(f"```autohotkey\n{logs}```")
+        # Ler as ultimas logs do arquivo logs.log
+        with open('logs.log', 'r', encoding='utf-8') as file:
+            logs = file.read()
+        while len(logs) > 2000:
+            logs = logs[logs.find('\n') + 1:]
+            if len(logs) < 2000:
+                logs_enviar = logs
+        await interaction.response.send_message(f"```autohotkey\n{logs_enviar}```")
         await comando_executado(interaction, self.bot)
 
 
