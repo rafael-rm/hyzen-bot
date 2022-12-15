@@ -7,6 +7,7 @@ import datetime
 import configparser
 import logging
 import os
+import zipfile
 
 class DevCommands(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -129,6 +130,23 @@ class DevCommands(commands.Cog):
         await comando_executado(interaction, self.bot)
 
 
+    # Comando de BACKUP
+    @group.command(name='backup', description='Faz um backup completo da aplicação.')
+    @permissao_usar_cmd()
+    async def backup(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Iniciando backup...", ephemeral=True)
+        await comando_executado(interaction, self.bot)
+        zip = zipfile.ZipFile('Backup.zip', 'w', zipfile.ZIP_DEFLATED)
+        for root, dirs, files in os.walk('.'):
+            for file in files:
+                if file == 'serviceAccountKey.json' or file == '.env' or file == 'Backup.zip':
+                    continue
+                zip.write(os.path.join(root, file))
+        zip.close()
+        await interaction.edit_original_response(content="Backup concluído.", attachments=[discord.File('Backup.zip')])
+        os.remove('Backup.zip')
+
+
     # Erro do comando PING
     @ping.error
     async def ping_error(self, interaction: discord.Interaction, error):
@@ -209,6 +227,17 @@ class DevCommands(commands.Cog):
     # Erro do comando LOGS
     @logs.error
     async def logs_error(self, interaction: discord.Interaction, error):
+        if isinstance(error, app_commands.CheckFailure):
+            await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
+        else:
+            await interaction.response.send_message("Ocorreu um erro ao executar o comando.", ephemeral=True)
+            logging.error(f'{error}')
+        await comando_executado(interaction, self.bot)
+
+
+    # Erro do comando BACKUP
+    @backup.error
+    async def backup_error(self, interaction: discord.Interaction, error):
         if isinstance(error, app_commands.CheckFailure):
             await interaction.response.send_message("Você não tem permissão para executar esse comando.", ephemeral=True)
         else:
