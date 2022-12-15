@@ -27,7 +27,7 @@ class App(commands.AutoShardedBot):
         super().__init__(
             intents = client_intents,
             command_prefix = '.',
-            shard_count = 1,
+            shard_count = 8,
         )
         self.database = FirebaseDB()
         self.time_start = datetime.datetime.now().timestamp()
