@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from src.others.comando_executado import comando_executado
+from src.functions.comando_executado import comando_executado
 import random
 import configparser
 import logging
@@ -11,7 +11,7 @@ class MixCommands(commands.Cog):
         self.bot = bot
 
 
-    group = app_commands.Group(name="mix", description="Comandos de MIX.")
+    group = app_commands.Group(name="mix", description="Comandos para organizar partidas de mix.")
 
 
     @commands.Cog.listener()
@@ -83,9 +83,9 @@ class MixCommands(commands.Cog):
     # Erro do comando de SORTEAR
     @sortear.error
     async def sortear_error(self, interaction: discord.Interaction, error):
+        await comando_executado(interaction, self.bot)
         await interaction.response.send_message('Ocorreu um erro ao executar o comando.')
         logging.error(f'{error}')
-        await comando_executado(interaction, self.bot)
 
 
 async def setup(bot: commands.Bot) -> None:

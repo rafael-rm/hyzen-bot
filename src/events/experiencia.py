@@ -18,51 +18,54 @@ class ExperienciaEvento(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+
+        if message.guild is None:
+            return
+
         bucket = self.cooldown.get_bucket(message)
         retry_after = bucket.update_rate_limit()
 
-        if retry_after:
-            # print(f'[DEBUG] {message.author} está em cooldown de {retry_after:.2f} segundos para ganhar experiência.')
+        if retry_after: # Se o usuário estiver no cooldown, o bot não irá executar o código abaixo.
             pass
         else:
             if message.author.bot:
                 return
             
             request = db.reference('/servidores/' + str(message.guild.id) + '/usuarios/' + str(message.author.id) + '/experiencia')
+            dados = request.get()
+
             xp_gerado = random.randint(10, 50)
 
-            if request.get() is None:
-                request.set({
+            if dados is None:
+                dados = {
                     'level': 1,
-                    'xp': 0,
-                })
+                    'xp': 0
+                }
                 
+            try: 
+                level_atual = dados['level']
+            except:
+                level_atual = 1
             try:
-                xp_atual = request.get()['xp']
+                xp_atual = dados['xp']
             except:
                 xp_atual = 0
 
-            try:
-                level_atual = request.get()['level']
-            except:
-                level_atual = 1
-
             xp_atual += xp_gerado
             xp_para_proximo_level = int(5 * (level_atual ** 2) + 50 * level_atual + 100)
-            
-            # print(f'[DEBUG] {message.author} ganhou {xp_gerado} de XP.')
-            # print(f'[DEBUG] {message.author} está no level {level_atual} com {xp_atual} de XP.')
-            # print(f'[DEBUG] {message.author} precisa de {xp_para_proximo_level} de XP para subir de level.')
 
             if xp_atual >= xp_para_proximo_level:
                 xp_atual -= xp_para_proximo_level
                 level_atual += 1
                 logging.info(f'{message.author.id} subiu para o level {level_atual} no servidor {message.guild.id}.')
-
-            request.update({
-                'xp': xp_atual,
-                'level': level_atual,
-            })
+                request.update({
+                    'xp': xp_atual,
+                    'level': level_atual,
+                })
+            else:
+                request.update({
+                    'xp': xp_atual,
+                })
 
 
 async def setup(bot: commands.Bot) -> None:
